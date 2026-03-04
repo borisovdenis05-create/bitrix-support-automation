@@ -32,11 +32,12 @@ function Nav() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center">
-            <span className="text-[hsl(220,20%,6%)] font-golos font-black text-sm leading-none">IT</span>
-          </div>
-          <span className="font-golos font-bold text-xl text-white">25</span>
+        <a href="#" className="flex items-center">
+          <img
+            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/39cf89f9-e068-4ca7-81a6-b30477dfd19e.png"
+            alt="IT25"
+            className="h-8 w-auto brightness-0 invert"
+          />
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -828,12 +829,12 @@ function Footer() {
   return (
     <footer className="border-t border-white/8 py-10">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center">
-            <span className="text-[hsl(220,20%,6%)] font-golos font-bold text-xs">IT</span>
-          </div>
-          <span className="font-golos font-bold text-white text-lg">25</span>
-          <span className="font-ibm text-white/30 text-sm ml-2">— Автоматизация бизнеса</span>
+        <div className="flex items-center">
+          <img
+            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/39cf89f9-e068-4ca7-81a6-b30477dfd19e.png"
+            alt="IT25"
+            className="h-7 w-auto brightness-0 invert opacity-60"
+          />
         </div>
 
         <div className="flex gap-8 flex-wrap justify-center">
