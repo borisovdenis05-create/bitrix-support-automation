@@ -1,8 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/files/41e3ea9b-a178-4e27-9f7e-13c27cea0abb.jpg";
 const TEAM_IMAGE = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/files/1ba8b785-57a1-4ef2-a1f1-a6c46b1d80f5.jpg";
+
+// ─── INTERSECTION OBSERVER HOOK ─────────────────────────────────────────────
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
 
 // ─── NAV ────────────────────────────────────────────────────────────────────
 
@@ -199,24 +217,24 @@ const CRM_TABS = [
       { icon: "Plug", title: "Интеграции", desc: "1С, телефония, мессенджеры, email, маркетплейсы и API.", tags: ["1С", "API"] },
       { icon: "Wrench", title: "Обслуживание", desc: "Обновления, мониторинг, бэкапы и оптимизация портала.", tags: ["Обновления", "Бэкапы"] },
       { icon: "GraduationCap", title: "Обучение", desc: "Тренинги для команды: от азов до продвинутых функций.", tags: ["Тренинги"] },
-      { icon: "Settings", title: "Внедрение с нуля", desc: "Аудит, настройка, запуск и обучение сотрудников.", tags: ["Под ключ"] },
+      { icon: "Rocket", title: "Внедрение с нуля", desc: "Аудит, настройка, запуск и обучение сотрудников.", tags: ["Под ключ"] },
     ],
   },
   {
     id: "uon",
     label: "U-ON",
-    color: "emerald",
-    accent: "text-emerald-300",
-    activeBg: "bg-emerald-500/20 border-emerald-500/40 text-emerald-200",
+    color: "purple",
+    accent: "text-purple-300",
+    activeBg: "bg-purple-500/20 border-purple-500/40 text-purple-200",
     inactiveBg: "bg-white/4 border-white/8 text-white/50 hover:text-white/80",
     desc: "Специализированная CRM для туристического бизнеса — настроим и автоматизируем работу турагентства",
     services: [
-      { icon: "Headphones", title: "Техподдержка", desc: "Поддержка U-ON: настройка, ошибки, вопросы по функционалу.", tags: ["Поддержка"] },
-      { icon: "Users", title: "Настройка CRM", desc: "Воронки туров, работа с клиентами, автоуведомления.", tags: ["Воронки", "Туры"] },
-      { icon: "Plug", title: "Интеграции", desc: "Подбор туров, онлайн-оплата, email и мессенджеры.", tags: ["Оплата", "Email"] },
-      { icon: "BarChart2", title: "Аналитика", desc: "Настройка отчётов, дашбордов и KPI-метрик для руководителя.", tags: ["Отчёты", "KPI"] },
-      { icon: "GraduationCap", title: "Обучение", desc: "Обучение менеджеров и руководителей работе в U-ON.", tags: ["Тренинги"] },
-      { icon: "Settings", title: "Внедрение", desc: "Полный переезд на U-ON: перенос базы, настройка, запуск.", tags: ["Миграция"] },
+      { icon: "Headphones", title: "Техподдержка", desc: "Поддержка U-ON: настройка, ошибки, вопросы по функционалу.", tags: ["Онлайн"] },
+      { icon: "Settings", title: "Настройка CRM", desc: "Воронки туров, работа с клиентами, автоуведомления.", tags: ["Воронки"] },
+      { icon: "Plug", title: "Интеграции", desc: "Подбор туров, онлайн-оплата, email и мессенджеры.", tags: ["Оплата", "Боты"] },
+      { icon: "BarChart2", title: "Аналитика", desc: "Настройка отчётов, дашбордов и KPI-метрик для руководителя.", tags: ["KPI"] },
+      { icon: "GraduationCap", title: "Обучение", desc: "Обучение менеджеров и руководителей работе в U-ON.", tags: ["Онлайн"] },
+      { icon: "Rocket", title: "Внедрение", desc: "Полный переезд на U-ON: перенос базы, настройка, запуск.", tags: ["Под ключ"] },
     ],
   },
   {
@@ -228,65 +246,68 @@ const CRM_TABS = [
     inactiveBg: "bg-white/4 border-white/8 text-white/50 hover:text-white/80",
     desc: "Платформа для онлайн-школ и инфобизнеса — запустим, настроим и автоматизируем вашу школу",
     services: [
-      { icon: "BookOpen", title: "Настройка школы", desc: "Создание курсов, уроков, домашних заданий и тестов.", tags: ["Курсы", "Тесты"] },
-      { icon: "ShoppingCart", title: "Воронки продаж", desc: "Автоматизация продаж, вебинарные воронки, апселлы.", tags: ["Воронки", "Вебинары"] },
-      { icon: "Plug", title: "Интеграции", desc: "Оплата, рассылки, Telegram-боты, CRM и аналитика.", tags: ["Оплата", "Боты"] },
-      { icon: "Mail", title: "Email & рассылки", desc: "Настройка цепочек писем, автосегментация базы.", tags: ["Email", "SMS"] },
-      { icon: "GraduationCap", title: "Обучение", desc: "Обучим команду эффективно работать с платформой.", tags: ["Тренинги"] },
-      { icon: "Zap", title: "Автоматизация", desc: "Бизнес-процессы, автосегменты, триггерные сценарии.", tags: ["Авто", "Триггеры"] },
+      { icon: "BookOpen", title: "Настройка школы", desc: "Создание курсов, уроков, домашних заданий и тестов.", tags: ["Курсы"] },
+      { icon: "TrendingUp", title: "Воронки продаж", desc: "Автоматизация продаж, вебинарные воронки, апселлы.", tags: ["Воронки"] },
+      { icon: "Plug", title: "Интеграции", desc: "Оплата, рассылки, Telegram-боты, CRM и аналитика.", tags: ["Боты", "CRM"] },
+      { icon: "Mail", title: "Email & рассылки", desc: "Настройка цепочек писем, автосегментация базы.", tags: ["Email"] },
+      { icon: "GraduationCap", title: "Обучение", desc: "Обучим команду эффективно работать с платформой.", tags: ["Онлайн"] },
+      { icon: "Cpu", title: "Автоматизация", desc: "Бизнес-процессы, автосегменты, триггерные сценарии.", tags: ["Авто"] },
     ],
   },
 ];
 
 function Services() {
   const [activeTab, setActiveTab] = useState("bitrix");
-  const crm = CRM_TABS.find((c) => c.id === activeTab)!;
+  const tab = CRM_TABS.find((t) => t.id === activeTab)!;
+  const { ref, inView } = useInView();
 
   return (
-    <section id="services" className="py-24 relative">
+    <section id="services" className="py-24 relative" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-12">
-          <span className="section-label mb-3 block">Что мы делаем</span>
-          <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Услуги IT25</h2>
-          <p className="font-ibm text-white/50 text-lg max-w-xl">
-            Выберите CRM-систему — расскажем, что можем сделать именно для неё
-          </p>
+        <div className={`mb-12 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <span className="section-label mb-3 block">Услуги</span>
+          <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Что мы делаем</h2>
+          <p className="font-ibm text-white/50 text-lg max-w-xl">{tab.desc}</p>
         </div>
 
-        {/* CRM Tabs */}
-        <div className="flex gap-3 mb-8 flex-wrap">
-          {CRM_TABS.map((tab) => (
+        <div className="flex gap-3 mb-10 flex-wrap">
+          {CRM_TABS.map((t) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-2.5 rounded-xl font-golos font-semibold text-sm border transition-all duration-200 ${
-                activeTab === tab.id ? tab.activeBg : tab.inactiveBg
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              className={`font-ibm text-sm font-semibold px-5 py-2.5 rounded-xl border transition-all duration-200 ${
+                activeTab === t.id ? t.activeBg : t.inactiveBg
               }`}
             >
-              {tab.label}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* CRM desc */}
-        <p className={`font-ibm text-sm mb-8 ${crm.accent} opacity-80`}>{crm.desc}</p>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {crm.services.map((s) => (
-            <div key={s.title} className="card-glass rounded-2xl p-6 card-hover border border-white/5 group">
-              <div className={`w-11 h-11 rounded-xl mb-4 flex items-center justify-center ${
-                crm.color === "blue" ? "bg-blue-500/15" :
-                crm.color === "emerald" ? "bg-emerald-500/15" : "bg-orange-500/15"
+          {tab.services.map((s, i) => (
+            <div
+              key={s.title}
+              className={`card-glass rounded-2xl p-6 border border-white/5 card-hover group transition-all duration-500 ${
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+              }`}
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 ${
+                tab.color === "blue" ? "bg-blue-500/15" :
+                tab.color === "purple" ? "bg-purple-500/15" : "bg-orange-500/15"
               }`}>
-                <Icon name={s.icon} fallback="Star" size={20} className={crm.accent} />
+                <Icon name={s.icon} fallback="Star" size={20} className={tab.accent} />
               </div>
-              <h3 className={`font-golos font-bold text-white text-lg mb-2 transition-colors group-hover:${crm.accent}`}>
-                {s.title}
-              </h3>
-              <p className="font-ibm text-white/50 text-sm leading-relaxed mb-4">{s.desc}</p>
-              <div className="flex flex-wrap gap-2">
-                {s.tags.map((t) => (
-                  <span key={t} className="font-ibm text-xs text-white/40 bg-white/5 px-3 py-1 rounded-full">{t}</span>
+              <h3 className={`font-golos font-bold text-white text-lg mb-2 group-hover:${tab.accent} transition-colors`}>{s.title}</h3>
+              <p className="font-ibm text-white/45 text-sm leading-relaxed mb-4">{s.desc}</p>
+              <div className="flex gap-2 flex-wrap">
+                {s.tags.map((tag) => (
+                  <span key={tag} className={`font-ibm text-xs px-2.5 py-1 rounded-lg ${
+                    tab.color === "blue" ? "bg-blue-500/10 text-blue-400" :
+                    tab.color === "purple" ? "bg-purple-500/10 text-purple-400" :
+                    "bg-orange-500/10 text-orange-400"
+                  }`}>{tag}</span>
                 ))}
               </div>
             </div>
@@ -299,104 +320,100 @@ function Services() {
 
 // ─── CALCULATOR ──────────────────────────────────────────────────────────────
 
-const CALC_ITEMS = [
-  { id: "support", label: "Техподдержка", desc: "До 10 обращений/мес", price: 9900 },
-  { id: "bp", label: "Бизнес-процессы", desc: "Настройка воронок и авто", price: 14900 },
-  { id: "integration", label: "Интеграция", desc: "Подключение 1 сервиса", price: 19900 },
-  { id: "maintenance", label: "Тех. обслуживание", desc: "Ежемесячный пакет", price: 7900 },
-  { id: "training", label: "Обучение", desc: "Группа до 5 человек", price: 12000 },
-  { id: "implementation", label: "Внедрение с нуля", desc: "Полный цикл", price: 49900 },
+const CALC_SERVICES = [
+  { id: "support", label: "Техподдержка", base: 9900, unit: "/мес" },
+  { id: "bp", label: "Бизнес-процессы", base: 14900, unit: "" },
+  { id: "int", label: "Интеграция", base: 19900, unit: "" },
+  { id: "maint", label: "Тех. обслуживание", base: 7900, unit: "/мес" },
+  { id: "edu", label: "Обучение", base: 12000, unit: "" },
+  { id: "impl", label: "Внедрение с нуля", base: 49900, unit: "" },
 ];
 
-const MULTIPLIERS = [
-  { id: "s", label: "До 5 чел.", mult: 1 },
-  { id: "m", label: "5–20 чел.", mult: 1.4 },
-  { id: "l", label: "20+ чел.", mult: 2 },
+const SIZES = [
+  { label: "До 5 чел.", mult: 1.0 },
+  { label: "5–20 чел.", mult: 1.4 },
+  { label: "20+ чел.", mult: 2.0 },
 ];
 
 function Calculator() {
   const [selected, setSelected] = useState<string[]>([]);
-  const [size, setSize] = useState("s");
+  const [sizeIdx, setSizeIdx] = useState(0);
+  const { ref, inView } = useInView();
 
   const toggle = (id: string) =>
-    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
-  const baseTotal = CALC_ITEMS.filter((i) => selected.includes(i.id)).reduce((sum, i) => sum + i.price, 0);
-  const mult = MULTIPLIERS.find((m) => m.id === size)?.mult ?? 1;
-  const total = Math.round(baseTotal * mult);
+  const total = CALC_SERVICES
+    .filter((s) => selected.includes(s.id))
+    .reduce((acc, s) => acc + Math.round(s.base * SIZES[sizeIdx].mult), 0);
 
   return (
-    <section className="py-24 relative">
-      <div className="absolute inset-0 opacity-30"
-        style={{ background: "radial-gradient(ellipse 800px 400px at 50% 50%, hsl(174,100%,50%,0.06), transparent)" }} />
-      <div className="max-w-5xl mx-auto px-6 relative">
-        <div className="mb-12 text-center">
-          <span className="section-label mb-3 block">Калькулятор</span>
-          <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">
-            Рассчитайте стоимость
-          </h2>
-          <p className="font-ibm text-white/50 text-lg">
-            Выберите нужные услуги — мы подберём оптимальный пакет
-          </p>
+    <section className="py-24 relative overflow-hidden" ref={ref}>
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/30 to-transparent" />
+      <div className="max-w-5xl mx-auto px-6">
+        <div className={`mb-12 text-center transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <span className="section-label mb-3 block">Стоимость</span>
+          <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Калькулятор услуг</h2>
+          <p className="font-ibm text-white/50 text-lg">Выберите нужные услуги — получите предварительную стоимость</p>
         </div>
 
-        <div className="card-glass rounded-3xl p-8 border border-white/8">
-          <div className="mb-8">
-            <div className="font-golos font-semibold text-white mb-4">Размер компании</div>
+        <div className={`card-glass rounded-2xl p-8 border border-white/8 transition-all duration-700 delay-200 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div className="mb-6">
+            <div className="font-ibm text-white/50 text-sm mb-3">Размер команды</div>
             <div className="flex gap-3 flex-wrap">
-              {MULTIPLIERS.map((m) => (
+              {SIZES.map((s, i) => (
                 <button
-                  key={m.id}
-                  onClick={() => setSize(m.id)}
-                  className={`px-5 py-2.5 rounded-xl font-ibm text-sm font-medium transition-all duration-200 ${
-                    size === m.id
-                      ? "bg-purple-500 text-white"
-                      : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/8"
+                  key={s.label}
+                  onClick={() => setSizeIdx(i)}
+                  className={`font-ibm text-sm px-4 py-2 rounded-xl border transition-all ${
+                    sizeIdx === i
+                      ? "bg-purple-400/20 border-purple-400/50 text-purple-300"
+                      : "bg-white/4 border-white/8 text-white/50 hover:text-white/80"
                   }`}
                 >
-                  {m.label}
+                  {s.label}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {CALC_ITEMS.map((item) => {
-              const active = selected.includes(item.id);
+          <div className="font-ibm text-white/50 text-sm mb-3">Услуги</div>
+          <div className="grid md:grid-cols-2 gap-3 mb-8">
+            {CALC_SERVICES.map((s) => {
+              const isOn = selected.includes(s.id);
               return (
                 <button
-                  key={item.id}
-                  onClick={() => toggle(item.id)}
-                  className={`text-left p-4 rounded-2xl border transition-all duration-200 ${
-                    active
-                      ? "border-purple-400/60 bg-purple-400/8 shadow-[0_0_20px_rgba(147,90,255,0.08)]"
-                      : "border-white/8 bg-white/3 hover:border-white/20 hover:bg-white/5"
+                  key={s.id}
+                  onClick={() => toggle(s.id)}
+                  className={`flex items-center justify-between p-4 rounded-xl border text-left transition-all duration-200 ${
+                    isOn
+                      ? "bg-purple-400/10 border-purple-400/40"
+                      : "bg-white/3 border-white/6 hover:border-white/15"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="font-golos font-semibold text-white text-sm leading-tight">{item.label}</div>
-                    <div className={`w-5 h-5 rounded-md border flex-shrink-0 flex items-center justify-center transition-all ${
-                      active ? "bg-purple-500 border-purple-500" : "border-white/20"
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                      isOn ? "bg-purple-400 border-purple-400" : "border-white/20"
                     }`}>
-                      {active && <Icon name="Check" size={12} className="text-[hsl(220,20%,6%)]" />}
+                      {isOn && <Icon name="Check" size={12} className="text-white" />}
                     </div>
+                    <span className={`font-ibm text-sm ${isOn ? "text-white" : "text-white/60"}`}>{s.label}</span>
                   </div>
-                  <div className="font-ibm text-white/40 text-xs mb-3">{item.desc}</div>
-                  <div className="font-golos font-bold text-orange-400">от {item.price.toLocaleString("ru")} ₽</div>
+                  <span className={`font-golos font-semibold text-sm ${isOn ? "text-purple-300" : "text-white/30"}`}>
+                    {Math.round(s.base * SIZES[sizeIdx].mult).toLocaleString("ru")} ₽{s.unit}
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-white/8">
+          <div className="flex items-center justify-between pt-6 border-t border-white/8 flex-wrap gap-4">
             <div>
-              {selected.length === 0 ? (
-                <div className="font-ibm text-white/40">Выберите услуги для расчёта</div>
+              <div className="font-ibm text-white/40 text-sm mb-1">Итого</div>
+              {total === 0 ? (
+                <div className="font-ibm text-white/30 text-xl">Выберите услуги выше</div>
               ) : (
                 <>
-                  <div className="font-ibm text-white/50 text-sm mb-1">
-                    Итого за {selected.length} услугу(и) · коэф. ×{mult}
-                  </div>
                   <div className="font-golos font-black text-4xl gradient-text">
                     {total.toLocaleString("ru")} ₽
                     <span className="text-xl text-white/40 font-normal">/мес</span>
@@ -416,65 +433,200 @@ function Calculator() {
 
 // ─── PORTFOLIO ──────────────────────────────────────────────────────────────
 
-const PORTFOLIO = [
+const PORTFOLIO_TABS = [
   {
-    tag: "Интеграция",
-    title: "CRM + Телефония",
-    desc: "Интеграция Битрикс24 с IP-телефонией и автоматическая фиксация всех звонков в CRM для торговой компании.",
-    result: "Конверсия +35%",
-    color: "cyan",
+    id: "bitrix",
+    label: "Битрикс24",
+    cases: [
+      {
+        tag: "Интеграция",
+        title: "CRM + Телефония",
+        desc: "Интеграция Битрикс24 с IP-телефонией и автоматическая фиксация всех звонков в CRM для торговой компании.",
+        result: "Конверсия +35%",
+        icon: "Phone",
+        color: "purple",
+      },
+      {
+        tag: "Автоматизация",
+        title: "Воронка продаж",
+        desc: "Автоматизация полного цикла сделки для агентства недвижимости: от заявки до подписания договора.",
+        result: "Скорость сделки ×2",
+        icon: "TrendingUp",
+        color: "orange",
+      },
+      {
+        tag: "Внедрение",
+        title: "CRM с нуля для клиники",
+        desc: "Полное внедрение Битрикс24 для медицинской клиники: расписание, пациенты, напоминания.",
+        result: "ROI за 3 месяца",
+        icon: "HeartPulse",
+        color: "purple",
+      },
+      {
+        tag: "Интеграция",
+        title: "1С + Битрикс24",
+        desc: "Двусторонняя синхронизация товаров, заказов и клиентской базы между 1С и Битрикс24 для оптовика.",
+        result: "0 ошибок данных",
+        icon: "RefreshCw",
+        color: "orange",
+      },
+      {
+        tag: "Автоматизация",
+        title: "Роботы и триггеры",
+        desc: "Настройка 27 роботов и триггеров в CRM строительной компании — уведомления, задачи, документы.",
+        result: "Рутина −70%",
+        icon: "Cpu",
+        color: "purple",
+      },
+      {
+        tag: "Аналитика",
+        title: "BI-дашборды",
+        desc: "Настройка аналитики и отчётности для руководства: воронки, конверсии, план-факт по менеджерам.",
+        result: "Решения быстрее ×3",
+        icon: "BarChart2",
+        color: "orange",
+      },
+    ],
   },
   {
-    tag: "Автоматизация",
-    title: "Воронка продаж",
-    desc: "Автоматизация полного цикла сделки для агентства недвижимости: от заявки до подписания договора.",
-    result: "Скорость сделки ×2",
-    color: "lime",
+    id: "uon",
+    label: "U-ON",
+    cases: [
+      {
+        tag: "Внедрение",
+        title: "Турагентство под ключ",
+        desc: "Полный переезд турагентства на U-ON: перенос базы клиентов, настройка воронок, обучение менеджеров.",
+        result: "3 дня на запуск",
+        icon: "Plane",
+        color: "purple",
+      },
+      {
+        tag: "Автоматизация",
+        title: "Автоуведомления",
+        desc: "Настройка цепочки автоуведомлений клиентам: подтверждение брони, напоминания, документы.",
+        result: "Отказы −40%",
+        icon: "Bell",
+        color: "orange",
+      },
+      {
+        tag: "Интеграция",
+        title: "Онлайн-оплата",
+        desc: "Подключение онлайн-оплаты и автоматического выставления счётов прямо из U-ON.",
+        result: "Оплаты быстрее ×4",
+        icon: "CreditCard",
+        color: "purple",
+      },
+      {
+        tag: "Обучение",
+        title: "Команда 40 человек",
+        desc: "Корпоративное обучение сотрудников производственной компании и турагентства работе в U-ON.",
+        result: "Внедрено за 2 недели",
+        icon: "Users",
+        color: "orange",
+      },
+    ],
   },
   {
-    tag: "Обучение",
-    title: "Команда 40 человек",
-    desc: "Корпоративное обучение сотрудников производственной компании работе с U-ON и Битрикс24.",
-    result: "Внедрено за 2 недели",
-    color: "purple",
-  },
-  {
-    tag: "Внедрение",
-    title: "CRM с нуля",
-    desc: "Полное внедрение Битрикс24 для медицинской клиники: расписание, пациенты, напоминания.",
-    result: "ROI за 3 месяца",
-    color: "cyan",
+    id: "getcourse",
+    label: "Геткурс",
+    cases: [
+      {
+        tag: "Запуск школы",
+        title: "Онлайн-школа с нуля",
+        desc: "Запуск онлайн-школы английского языка: курсы, уроки, автоматические домашние задания и сертификаты.",
+        result: "100+ учеников в 1 мес.",
+        icon: "BookOpen",
+        color: "purple",
+      },
+      {
+        tag: "Воронки",
+        title: "Вебинарная воронка",
+        desc: "Сборка автовебинарной воронки с автоматическими дожимами, апселлами и сегментацией базы.",
+        result: "Конверсия +28%",
+        icon: "TrendingUp",
+        color: "orange",
+      },
+      {
+        tag: "Интеграция",
+        title: "Telegram-бот + Геткурс",
+        desc: "Интеграция с Telegram-ботом: доступ к урокам, домашние задания и коммуникация с учеником внутри мессенджера.",
+        result: "Вовлечённость ×2",
+        icon: "MessageSquare",
+        color: "purple",
+      },
+      {
+        tag: "Автоматизация",
+        title: "Email-маркетинг",
+        desc: "Настройка цепочек продающих писем, автосегментации базы и триггерных рассылок для инфобизнеса.",
+        result: "LTV +45%",
+        icon: "Mail",
+        color: "orange",
+      },
+    ],
   },
 ];
 
 function Portfolio() {
+  const [activeTab, setActiveTab] = useState("bitrix");
+  const tab = PORTFOLIO_TABS.find((t) => t.id === activeTab)!;
+  const { ref, inView } = useInView();
+
   return (
-    <section id="portfolio" className="py-24 relative">
+    <section id="portfolio" className="py-24 relative" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-16">
+        <div className={`mb-12 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Наши работы</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Портфолио</h2>
           <p className="font-ibm text-white/50 text-lg max-w-xl">Реальные результаты для реальных бизнесов</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {PORTFOLIO.map((p) => (
-            <div key={p.title} className="card-glass rounded-2xl p-7 card-hover border border-white/5 group relative overflow-hidden">
-              <div className={`absolute top-0 left-0 right-0 h-0.5 ${
-                p.color === "cyan" ? "bg-gradient-to-r from-purple-400 to-transparent" :
-                p.color === "lime" ? "bg-gradient-to-r from-orange-400 to-transparent" :
-                "bg-gradient-to-r from-purple-400 to-orange-400"
+        <div className="flex gap-3 mb-10 flex-wrap">
+          {PORTFOLIO_TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              className={`font-ibm text-sm font-semibold px-5 py-2.5 rounded-xl border transition-all duration-200 ${
+                activeTab === t.id
+                  ? "bg-purple-400/20 border-purple-400/50 text-purple-200"
+                  : "bg-white/4 border-white/8 text-white/50 hover:text-white/80"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tab.cases.map((p, i) => (
+            <div
+              key={p.title}
+              className={`card-glass rounded-2xl p-7 border border-white/5 group relative overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:border-white/15 hover:shadow-[0_8px_40px_rgba(139,92,246,0.15)] ${
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+              }`}
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <div className={`absolute top-0 left-0 right-0 h-0.5 transition-all duration-300 group-hover:h-1 ${
+                p.color === "purple"
+                  ? "bg-gradient-to-r from-purple-400 to-transparent"
+                  : "bg-gradient-to-r from-orange-400 to-transparent"
               }`} />
+
               <div className="flex items-start justify-between gap-4 mb-4">
-                <span className={`font-ibm text-xs font-medium px-3 py-1 rounded-full ${
-                  p.color === "cyan" ? "bg-purple-400/15 text-purple-400" :
-                  p.color === "lime" ? "bg-orange-400/15 text-orange-400" :
-                  "bg-purple-400/15 text-purple-400"
-                }`}>{p.tag}</span>
-                <span className="font-golos font-bold text-sm text-white/30 group-hover:text-white/60 transition-colors">{p.result}</span>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                    p.color === "purple" ? "bg-purple-400/15" : "bg-orange-400/15"
+                  }`}>
+                    <Icon name={p.icon} fallback="Star" size={18} className={p.color === "purple" ? "text-purple-400" : "text-orange-400"} />
+                  </div>
+                  <span className={`font-ibm text-xs font-medium px-2.5 py-1 rounded-full ${
+                    p.color === "purple" ? "bg-purple-400/15 text-purple-400" : "bg-orange-400/15 text-orange-400"
+                  }`}>{p.tag}</span>
+                </div>
+                <span className="font-golos font-bold text-sm text-white/30 group-hover:text-orange-400 transition-colors whitespace-nowrap">{p.result}</span>
               </div>
-              <h3 className="font-golos font-bold text-white text-2xl mb-3 group-hover:text-purple-400 transition-colors">{p.title}</h3>
-              <p className="font-ibm text-white/50 text-sm leading-relaxed">{p.desc}</p>
+
+              <h3 className="font-golos font-bold text-white text-xl mb-3 group-hover:text-purple-300 transition-colors">{p.title}</h3>
+              <p className="font-ibm text-white/45 text-sm leading-relaxed">{p.desc}</p>
             </div>
           ))}
         </div>
@@ -490,7 +642,7 @@ const COURSES = [
     level: "Базовый",
     title: "Битрикс24 для сотрудников",
     duration: "4 часа",
-    format: "Онлайн / Офис",
+    format: "Онлайн",
     topics: ["Задачи и проекты", "CRM основы", "Коммуникации", "Документы"],
     price: "от 5 000 ₽",
     accent: "cyan",
@@ -500,7 +652,7 @@ const COURSES = [
     level: "Продвинутый",
     title: "CRM и автоматизация",
     duration: "8 часов",
-    format: "Онлайн / Офис",
+    format: "Онлайн",
     topics: ["Воронки продаж", "Бизнес-процессы", "Интеграции", "Аналитика"],
     price: "от 12 000 ₽",
     accent: "lime",
@@ -510,7 +662,7 @@ const COURSES = [
     level: "Корпоративный",
     title: "Полное внедрение команды",
     duration: "Под ключ",
-    format: "На вашей площадке",
+    format: "Онлайн",
     topics: ["Индивидуальная программа", "База знаний", "Видеоинструкции", "Поддержка 3 мес."],
     price: "По запросу",
     accent: "purple",
@@ -519,12 +671,13 @@ const COURSES = [
 ];
 
 function Education() {
+  const { ref, inView } = useInView();
   return (
-    <section id="education" className="py-24 relative overflow-hidden">
+    <section id="education" className="py-24 relative overflow-hidden" ref={ref}>
       <div className="absolute -right-64 top-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-10"
         style={{ background: "hsl(28,100%,58%)" }} />
       <div className="max-w-7xl mx-auto px-6 relative">
-        <div className="mb-16">
+        <div className={`mb-16 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Обучение</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Программы обучения</h2>
           <p className="font-ibm text-white/50 text-lg max-w-xl">
@@ -533,12 +686,16 @@ function Education() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {COURSES.map((c) => (
-            <div key={c.title} className={`rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 relative ${
-              c.featured
-                ? "border-orange-400/40 bg-gradient-to-b from-orange-400/8 to-transparent shadow-[0_0_40px_rgba(255,140,0,0.08)]"
-                : "card-glass border-white/5"
-            }`}>
+          {COURSES.map((c, i) => (
+            <div
+              key={c.title}
+              className={`rounded-2xl p-7 border transition-all duration-500 hover:-translate-y-2 relative ${
+                c.featured
+                  ? "border-orange-400/40 bg-gradient-to-b from-orange-400/8 to-transparent shadow-[0_0_40px_rgba(255,140,0,0.08)]"
+                  : "card-glass border-white/5 hover:border-white/15"
+              } ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
+              style={{ transitionDelay: `${i * 100}ms` }}
+            >
               {c.featured && (
                 <div className="absolute -top-3 left-6 bg-orange-400 text-[hsl(220,20%,6%)] font-golos font-bold text-xs px-3 py-1 rounded-full">
                   Популярный
@@ -594,53 +751,95 @@ function Education() {
 const BLOG_POSTS = [
   {
     category: "Битрикс24",
-    title: "Топ-5 настроек CRM для роста продаж в 2024",
-    excerpt: "Разбираем ключевые инструменты Битрикс24, которые позволяют увеличить конверсию воронки.",
-    date: "15 ноября 2024",
+    title: "Топ-5 настроек CRM для роста продаж в 2026",
+    excerpt: "Разбираем ключевые инструменты Битрикс24, которые позволяют увеличить конверсию воронки и сократить цикл сделки.",
+    date: "20 января 2026",
     readTime: "5 мин",
-    i: 0,
+    url: "https://habr.com/ru/articles/716482/",
+    color: "purple",
   },
   {
     category: "Интеграции",
     title: "Как подключить 1С к Битрикс24: пошаговый гайд",
     excerpt: "Полная инструкция по синхронизации номенклатуры, заказов и клиентской базы между системами.",
-    date: "8 ноября 2024",
+    date: "14 февраля 2026",
     readTime: "8 мин",
-    i: 1,
+    url: "https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=43",
+    color: "orange",
   },
   {
     category: "Автоматизация",
     title: "Бизнес-процессы в Битрикс24: с чего начать",
-    excerpt: "Простые и эффективные бизнес-процессы, которые избавят команду от рутины и ошибок.",
-    date: "1 ноября 2024",
+    excerpt: "Простые и эффективные бизнес-процессы, которые избавят команду от рутины и ошибок уже в первую неделю.",
+    date: "5 марта 2026",
     readTime: "6 мин",
-    i: 2,
+    url: "https://helpdesk.bitrix24.ru/open/14736534/",
+    color: "purple",
+  },
+  {
+    category: "U-ON",
+    title: "Как автоматизировать турагентство за 3 дня",
+    excerpt: "Пошаговый план внедрения U-ON: от регистрации до первой автоматической сделки с клиентом.",
+    date: "1 февраля 2026",
+    readTime: "7 мин",
+    url: "https://u-on.ru/blog/",
+    color: "orange",
+  },
+  {
+    category: "Геткурс",
+    title: "Запуск онлайн-школы: 10 ошибок начинающих",
+    excerpt: "Разбираем самые частые ошибки при запуске школы на Геткурсе и как их избежать без потери денег.",
+    date: "10 марта 2026",
+    readTime: "9 мин",
+    url: "https://getcourse.ru/blog",
+    color: "purple",
+  },
+  {
+    category: "CRM",
+    title: "Почему менеджеры не работают в CRM — и как это исправить",
+    excerpt: "Разбираемся с главной проблемой внедрения CRM: саботаж сотрудников и способы его преодолеть.",
+    date: "25 февраля 2026",
+    readTime: "6 мин",
+    url: "https://vc.ru/marketing/crm",
+    color: "orange",
   },
 ];
 
 function Blog() {
+  const { ref, inView } = useInView();
   return (
-    <section id="blog" className="py-24 relative">
+    <section id="blog" className="py-24 relative" ref={ref}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-16 flex-wrap gap-4">
+        <div className={`flex items-end justify-between mb-16 flex-wrap gap-4 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <div>
             <span className="section-label mb-3 block">Блог</span>
             <h2 className="font-golos text-4xl md:text-5xl font-black text-white">Полезные статьи</h2>
           </div>
-          <a href="#" className="btn-outline px-5 py-2.5 rounded-xl text-sm">Все статьи →</a>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {BLOG_POSTS.map((post) => (
-            <article key={post.title} className="card-glass rounded-2xl overflow-hidden card-hover border border-white/5 group cursor-pointer">
-              <div className={`h-2 ${
-                post.i === 0 ? "bg-gradient-to-r from-purple-400 to-orange-400" :
-                post.i === 1 ? "bg-gradient-to-r from-orange-400 to-purple-400" :
-                "bg-gradient-to-r from-purple-500 to-orange-400"
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {BLOG_POSTS.map((post, i) => (
+            <a
+              key={post.title}
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`card-glass rounded-2xl overflow-hidden border border-white/5 group cursor-pointer block transition-all duration-500 hover:-translate-y-2 hover:border-white/20 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)] ${
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+              }`}
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <div className={`h-1.5 transition-all duration-300 group-hover:h-2 ${
+                post.color === "purple"
+                  ? "bg-gradient-to-r from-purple-400 to-orange-400"
+                  : "bg-gradient-to-r from-orange-400 to-purple-400"
               }`} />
               <div className="p-6">
-                <span className="font-ibm text-xs text-purple-400 font-medium uppercase tracking-wider">{post.category}</span>
-                <h3 className="font-golos font-bold text-white text-lg mt-2 mb-3 group-hover:text-purple-400 transition-colors leading-snug">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-ibm text-xs text-purple-400 font-medium uppercase tracking-wider">{post.category}</span>
+                  <Icon name="ExternalLink" size={14} className="text-white/20 group-hover:text-purple-400 transition-colors" />
+                </div>
+                <h3 className="font-golos font-bold text-white text-lg mt-1 mb-3 group-hover:text-purple-300 transition-colors leading-snug">
                   {post.title}
                 </h3>
                 <p className="font-ibm text-white/40 text-sm leading-relaxed mb-6">{post.excerpt}</p>
@@ -651,7 +850,7 @@ function Blog() {
                   </span>
                 </div>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </div>
@@ -669,27 +868,33 @@ function About() {
     { icon: "Users", label: "Командно", desc: "Вы не одни — мы рядом на каждом шаге" },
   ];
 
+  const { ref, inView } = useInView();
+
   return (
-    <section id="about" className="py-24 relative overflow-hidden">
+    <section id="about" className="py-24 relative overflow-hidden" ref={ref}>
       <div className="absolute -left-64 top-1/2 w-[500px] h-[500px] rounded-full blur-3xl opacity-10"
         style={{ background: "hsl(258,90%,66%)" }} />
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-        <div>
+        <div className={`transition-all duration-700 ${inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}>
           <span className="section-label mb-3 block">О компании</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-6">
             Кто такие<br /><span className="gradient-text-purple">IT25?</span>
           </h2>
           <p className="font-ibm text-white/60 text-lg leading-relaxed mb-6">
             Мы — команда экспертов по автоматизации бизнеса. Уже 5 лет помогаем компаниям
-            настраивать Битрикс24 и U-ON так, чтобы они работали на вас, а не вы на них.
+            настраивать Битрикс24, U-ON и Геткурс так, чтобы они работали на вас, а не вы на них.
           </p>
           <p className="font-ibm text-white/40 leading-relaxed">
             Наши клиенты — малый и средний бизнес: агентства, производственные компании,
-            медицина, ритейл. Мы говорим на языке бизнеса, а не IT.
+            медицина, онлайн-школы, ритейл. Мы говорим на языке бизнеса, а не IT.
           </p>
           <div className="grid grid-cols-2 gap-4 mt-10">
-            {values.map((v) => (
-              <div key={v.label} className="flex gap-3 items-start">
+            {values.map((v, i) => (
+              <div
+                key={v.label}
+                className={`flex gap-3 items-start transition-all duration-500 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+                style={{ transitionDelay: `${200 + i * 80}ms` }}
+              >
                 <div className="w-9 h-9 rounded-lg bg-purple-400/15 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Icon name={v.icon} fallback="Star" size={16} className="text-purple-400" />
                 </div>
@@ -702,7 +907,7 @@ function About() {
           </div>
         </div>
 
-        <div className="relative">
+        <div className={`relative transition-all duration-700 delay-200 ${inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}>
           <div className="rounded-2xl overflow-hidden border border-white/8">
             <img src={TEAM_IMAGE} alt="Команда IT25" className="w-full h-[440px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,20%,6%,0.5)] to-transparent rounded-2xl" />
@@ -720,8 +925,9 @@ function About() {
 // ─── CONTACTS ────────────────────────────────────────────────────────────────
 
 function Contacts() {
-  const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const [form, setForm] = useState({ name: "", message: "" });
   const [sent, setSent] = useState(false);
+  const { ref, inView } = useInView();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -729,10 +935,10 @@ function Contacts() {
   };
 
   return (
-    <section id="contacts" className="py-24 relative overflow-hidden">
+    <section id="contacts" className="py-24 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 grid-bg opacity-50" />
       <div className="max-w-5xl mx-auto px-6 relative">
-        <div className="mb-12 text-center">
+        <div className={`mb-12 text-center transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Контакты</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Обсудим ваш проект</h2>
           <p className="font-ibm text-white/50 text-lg max-w-xl mx-auto">
@@ -740,7 +946,7 @@ function Contacts() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className={`grid lg:grid-cols-2 gap-8 transition-all duration-700 delay-200 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <div className="card-glass rounded-2xl p-8 border border-white/8">
             {sent ? (
               <div className="flex flex-col items-center justify-center h-full py-10 text-center">
@@ -764,17 +970,6 @@ function Contacts() {
                   />
                 </div>
                 <div>
-                  <label className="font-ibm text-sm text-white/60 block mb-2">Телефон</label>
-                  <input
-                    type="tel"
-                    required
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+7 (999) 000-00-00"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-ibm text-white placeholder-white/20 focus:outline-none focus:border-purple-400/60 transition-colors"
-                  />
-                </div>
-                <div>
                   <label className="font-ibm text-sm text-white/60 block mb-2">Описание задачи</label>
                   <textarea
                     rows={4}
@@ -793,27 +988,48 @@ function Contacts() {
 
           <div className="flex flex-col gap-5">
             {[
-              { icon: "Phone", label: "Телефон", value: "+7 (XXX) XXX-XX-XX", sub: "Пн–Пт, 9:00–18:00" },
-              { icon: "Mail", label: "Email", value: "info@it25.ru", sub: "Ответим в течение часа" },
-              { icon: "MessageCircle", label: "Telegram", value: "@it25_support", sub: "Быстрая связь 24/7" },
+              {
+                icon: "Mail",
+                label: "Email",
+                value: "info@it25.ru",
+                sub: "Ответим в течение часа",
+                href: "mailto:info@it25.ru",
+              },
+              {
+                icon: "Send",
+                label: "Telegram",
+                value: "@denisbrsv",
+                sub: "Быстрая связь 24/7",
+                href: "https://t.me/denisbrsv",
+              },
             ].map((c) => (
-              <div key={c.label} className="card-glass rounded-2xl p-5 border border-white/5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-cyan-400/15 flex items-center justify-center flex-shrink-0">
-                  <Icon name={c.icon} fallback="Phone" size={20} className="text-cyan-400" />
+              <a
+                key={c.label}
+                href={c.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card-glass rounded-2xl p-5 border border-white/5 flex items-center gap-4 hover:border-purple-400/30 hover:-translate-y-1 transition-all duration-200 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-purple-400/15 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-400/25 transition-colors">
+                  <Icon name={c.icon} fallback="Mail" size={20} className="text-purple-400" />
                 </div>
                 <div>
                   <div className="font-ibm text-white/40 text-xs mb-0.5">{c.label}</div>
-                  <div className="font-golos font-semibold text-white">{c.value}</div>
+                  <div className="font-golos font-semibold text-white group-hover:text-purple-300 transition-colors">{c.value}</div>
                   <div className="font-ibm text-white/30 text-xs">{c.sub}</div>
                 </div>
-              </div>
+              </a>
             ))}
 
             <div className="card-glass rounded-2xl p-6 border border-white/5 mt-2">
-              <div className="font-golos font-semibold text-white mb-2">Работаем по всей России</div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-lg bg-orange-400/15 flex items-center justify-center">
+                  <Icon name="Globe" size={16} className="text-orange-400" />
+                </div>
+                <div className="font-golos font-semibold text-white">Работаем по всей России</div>
+              </div>
               <p className="font-ibm text-white/40 text-sm leading-relaxed">
-                Онлайн-поддержка и настройка систем без выезда.
-                При необходимости — выезд к клиенту в вашем городе.
+                Все услуги оказываем онлайн — настройка, внедрение, обучение и поддержка без ограничений по географии.
               </p>
             </div>
           </div>
@@ -851,7 +1067,7 @@ function Footer() {
           ))}
         </div>
 
-        <div className="font-ibm text-white/20 text-sm">© 2024 IT25</div>
+        <div className="font-ibm text-white/20 text-sm">© 2026 IT25</div>
       </div>
     </footer>
   );
