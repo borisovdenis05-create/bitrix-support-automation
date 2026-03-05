@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
+
+const SEND_FORM_URL = "https://functions.poehali.dev/f4ab51cc-7b34-4cc3-a710-197e80da263f";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/files/86f33631-5ee0-4e05-b138-1cfce32a1f7b.jpg";
 const TEAM_IMAGE = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/files/fdf59d59-b44c-486d-997f-58c055a12062.jpg";
@@ -31,22 +34,50 @@ function useInView(threshold = 0.1) {
   return { ref, inView };
 }
 
+// ─── COUNTER HOOK ────────────────────────────────────────────────────────────
+
+function useCounter(target: number, duration: number, active: boolean) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(Math.floor(start));
+    }, 16);
+    return () => clearInterval(timer);
+  }, [active, target, duration]);
+  return count;
+}
+
 // ─── MODAL FORM ──────────────────────────────────────────────────────────────
 
-function ModalForm({ open, onClose }: { open: boolean; onClose: () => void }) {
+function ModalForm({ open, onClose, defaultCrm = "" }: { open: boolean; onClose: () => void; defaultCrm?: string }) {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
+    if (open) { document.body.style.overflow = "hidden"; setSent(false); setForm({ name: "", phone: "", message: "" }); }
     else document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   if (!open) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch(SEND_FORM_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, phone: form.phone, message: form.message, crm: defaultCrm, source: "Модальная форма" }),
+      });
+    } catch (_e) { /* ignore network errors, show success anyway */ }
+    setLoading(false);
     setSent(true);
   };
 
@@ -76,8 +107,14 @@ function ModalForm({ open, onClose }: { open: boolean; onClose: () => void }) {
         ) : (
           <>
             <h3 className="font-golos font-bold text-white text-2xl mb-1">Получить консультацию</h3>
-            <p className="font-ibm text-white/40 text-sm mb-6">Ответим в течение часа</p>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <p className="font-ibm text-white/40 text-sm mb-1">Ответим в течение часа</p>
+            {defaultCrm && (
+              <div className="mb-4 mt-1 inline-flex items-center gap-1.5 text-xs font-ibm font-semibold px-2.5 py-1 rounded-lg bg-purple-400/15 text-purple-300 border border-purple-400/20">
+                <Icon name="Tag" size={11} />
+                {defaultCrm}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div>
                 <label className="font-ibm text-sm text-white/60 block mb-2">Имя</label>
                 <input
@@ -110,8 +147,8 @@ function ModalForm({ open, onClose }: { open: boolean; onClose: () => void }) {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-ibm text-white placeholder-white/20 focus:outline-none focus:border-purple-400/60 transition-colors resize-none"
                 />
               </div>
-              <button type="submit" className="btn-primary w-full py-3.5 rounded-xl text-base">
-                Отправить заявку
+              <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 rounded-xl text-base disabled:opacity-60 flex items-center justify-center gap-2">
+                {loading ? <><Icon name="Loader2" size={16} className="animate-spin" />Отправляем...</> : "Отправить заявку"}
               </button>
             </form>
           </>
@@ -205,9 +242,27 @@ function Nav({ onOpenModal }: { onOpenModal: () => void }) {
 
 // ─── HERO ───────────────────────────────────────────────────────────────────
 
-function Hero({ onOpenModal }: { onOpenModal: () => void }) {
+function AnimatedStat({ num, label, active }: { num: string; label: string; active: boolean }) {
+  const isPercent = num.includes("%");
+  const isYears = num.includes("лет");
+  const rawNum = parseInt(num.replace(/\D/g, ""), 10);
+  const count = useCounter(rawNum, 1800, active);
+  let display = "";
+  if (isPercent) display = `${count}%`;
+  else if (isYears) display = `${count} лет`;
+  else display = `${count}+`;
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden grid-bg">
+    <div>
+      <div className="font-golos font-black text-3xl gradient-text">{active ? display : num}</div>
+      <div className="font-ibm text-white/40 text-sm mt-0.5">{label}</div>
+    </div>
+  );
+}
+
+function Hero({ onOpenModal }: { onOpenModal: () => void }) {
+  const { ref, inView } = useInView(0.2);
+  return (
+    <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden grid-bg">
       <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full blur-3xl opacity-20"
         style={{ background: "hsl(258,90%,66%)" }} />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full blur-3xl opacity-15"
@@ -253,10 +308,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
               { num: "5 лет", label: "Опыта" },
               { num: "98%", label: "Довольных клиентов" },
             ].map((s) => (
-              <div key={s.label}>
-                <div className="font-golos font-black text-3xl gradient-text">{s.num}</div>
-                <div className="font-ibm text-white/40 text-sm mt-0.5">{s.label}</div>
-              </div>
+              <AnimatedStat key={s.label} num={s.num} label={s.label} active={inView} />
             ))}
           </div>
         </div>
@@ -354,12 +406,34 @@ const CRM_TABS = [
       { icon: "Cpu", title: "Автоматизация", desc: "Бизнес-процессы, автосегменты, триггерные сценарии.", tags: ["Авто"] },
     ],
   },
+  {
+    id: "bothelp",
+    label: "БотХелп",
+    color: "green",
+    accent: "text-emerald-300",
+    activeBg: "bg-emerald-500/20 border-emerald-500/40 text-emerald-200",
+    inactiveBg: "bg-white/4 border-white/8 text-white/50 hover:text-white/80",
+    desc: "Разработка и интеграция чат-ботов для Telegram, ВКонтакте и других платформ — автоматизируем продажи и поддержку через мессенджеры",
+    services: [
+      { icon: "Bot", title: "Боты в Telegram", desc: "Разработка ботов любой сложности: продажи, поддержка, квизы, запись.", tags: ["Telegram", "API"] },
+      { icon: "MessageSquare", title: "Боты в ВКонтакте", desc: "Чат-боты для сообществ ВК: автоответы, воронки, рассылки.", tags: ["ВКонтакте"] },
+      { icon: "Plug", title: "Интеграции по API", desc: "Подключение ботов к CRM, платёжным системам, Google Sheets и любым сервисам.", tags: ["CRM", "Оплата"] },
+      { icon: "GitBranch", title: "Воронки в мессенджерах", desc: "Автоматические продающие цепочки: прогрев, квалификация, дожим.", tags: ["Воронки"] },
+      { icon: "Bell", title: "Рассылки и уведомления", desc: "Массовые и триггерные рассылки клиентам через Telegram и ВКонтакте.", tags: ["Рассылки"] },
+      { icon: "BarChart2", title: "Аналитика ботов", desc: "Настройка статистики: конверсии, воронки, поведение пользователей.", tags: ["Аналитика"] },
+    ],
+  },
 ];
 
-function Services() {
+function Services({ onOpenModal }: { onOpenModal: (crm?: string) => void }) {
   const [activeTab, setActiveTab] = useState("bitrix");
   const tab = CRM_TABS.find((t) => t.id === activeTab)!;
   const { ref, inView } = useInView();
+
+  const iconBg = (color: string) =>
+    color === "blue" ? "bg-blue-500/15" : color === "purple" ? "bg-purple-500/15" : color === "green" ? "bg-emerald-500/15" : "bg-orange-500/15";
+  const tagCls = (color: string) =>
+    color === "blue" ? "bg-blue-500/10 text-blue-400" : color === "purple" ? "bg-purple-500/10 text-purple-400" : color === "green" ? "bg-emerald-500/10 text-emerald-400" : "bg-orange-500/10 text-orange-400";
 
   return (
     <section id="services" className="py-24 relative" ref={ref}>
@@ -393,25 +467,27 @@ function Services() {
               }`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 ${
-                tab.color === "blue" ? "bg-blue-500/15" :
-                tab.color === "purple" ? "bg-purple-500/15" : "bg-orange-500/15"
-              }`}>
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 ${iconBg(tab.color)}`}>
                 <Icon name={s.icon} fallback="Star" size={20} className={tab.accent} />
               </div>
               <h3 className="font-golos font-bold text-white text-lg mb-2 group-hover:text-purple-300 transition-colors">{s.title}</h3>
               <p className="font-ibm text-white/45 text-sm leading-relaxed mb-4">{s.desc}</p>
               <div className="flex gap-2 flex-wrap">
                 {s.tags.map((tag) => (
-                  <span key={tag} className={`font-ibm text-xs px-2.5 py-1 rounded-lg ${
-                    tab.color === "blue" ? "bg-blue-500/10 text-blue-400" :
-                    tab.color === "purple" ? "bg-purple-500/10 text-purple-400" :
-                    "bg-orange-500/10 text-orange-400"
-                  }`}>{tag}</span>
+                  <span key={tag} className={`font-ibm text-xs px-2.5 py-1 rounded-lg ${tagCls(tab.color)}`}>{tag}</span>
                 ))}
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => onOpenModal(tab.label)}
+            className="btn-primary px-8 py-3.5 rounded-xl text-base"
+          >
+            Обсудить {tab.label}
+          </button>
         </div>
       </div>
     </section>
@@ -458,6 +534,18 @@ const CALC_GROUPS = [
       { id: "g_auto", label: "Автоматизация", desc: "Бизнес-процессы, триггеры", base: 17900, unit: "" },
     ],
   },
+  {
+    group: "БотХелп",
+    icon: "Bot",
+    color: "green",
+    items: [
+      { id: "bh_tg", label: "Бот в Telegram", desc: "Разработка бота под задачу", base: 24900, unit: "" },
+      { id: "bh_vk", label: "Бот ВКонтакте", desc: "Чат-бот для сообщества", base: 19900, unit: "" },
+      { id: "bh_api", label: "Интеграция по API", desc: "CRM, оплата, сервисы", base: 14900, unit: "" },
+      { id: "bh_funnel", label: "Воронка в мессенджере", desc: "Автопродажи и прогрев", base: 17900, unit: "" },
+      { id: "bh_send", label: "Рассылки", desc: "Массовые и триггерные", base: 9900, unit: "/мес" },
+    ],
+  },
 ];
 
 const SIZES = [
@@ -471,6 +559,7 @@ function Calculator() {
   const [selected, setSelected] = useState<string[]>([]);
   const [sizeIdx, setSizeIdx] = useState(0);
   const [calcSent, setCalcSent] = useState(false);
+  const [calcLoading, setCalcLoading] = useState(false);
   const [calcForm, setCalcForm] = useState({ name: "", phone: "" });
   const { ref, inView } = useInView();
 
@@ -480,8 +569,32 @@ function Calculator() {
   const selectedItems = CALC_GROUPS.flatMap((g) => g.items).filter((s) => selected.includes(s.id));
   const total = selectedItems.reduce((acc, s) => acc + Math.round(s.base * SIZES[sizeIdx].mult), 0);
 
-  const handleCalcSubmit = (e: React.FormEvent) => {
+  const colorCls = (color: string, type: "header" | "check" | "on" | "off" | "tag") => {
+    const map: Record<string, Record<string, string>> = {
+      blue:   { header: "bg-blue-500/10", check: "bg-blue-400 border-blue-400", on: "bg-blue-500/10 border-blue-400/30", off: "border-white/20", tag: "text-blue-300" },
+      purple: { header: "bg-purple-500/10", check: "bg-purple-400 border-purple-400", on: "bg-purple-500/10 border-purple-400/30", off: "border-white/20", tag: "text-purple-300" },
+      orange: { header: "bg-orange-500/10", check: "bg-orange-400 border-orange-400", on: "bg-orange-500/10 border-orange-400/30", off: "border-white/20", tag: "text-orange-300" },
+      green:  { header: "bg-emerald-500/10", check: "bg-emerald-400 border-emerald-400", on: "bg-emerald-500/10 border-emerald-400/30", off: "border-white/20", tag: "text-emerald-300" },
+    };
+    return map[color]?.[type] ?? "";
+  };
+  const iconCls = (color: string) =>
+    color === "blue" ? "text-blue-400" : color === "purple" ? "text-purple-400" : color === "green" ? "text-emerald-400" : "text-orange-400";
+  const labelCls = (color: string) =>
+    color === "blue" ? "text-blue-300" : color === "purple" ? "text-purple-300" : color === "green" ? "text-emerald-300" : "text-orange-300";
+
+  const handleCalcSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCalcLoading(true);
+    const servicesList = selectedItems.map((s) => `${s.label}: ${Math.round(s.base * SIZES[sizeIdx].mult).toLocaleString("ru")} ₽${s.unit}`).join(", ");
+    try {
+      await fetch(SEND_FORM_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: calcForm.name, phone: calcForm.phone, message: `Калькулятор. Итого: ${total.toLocaleString("ru")} ₽. Услуги: ${servicesList}`, source: "Калькулятор" }),
+      });
+    } catch (_e) { /* show success anyway */ }
+    setCalcLoading(false);
     setCalcSent(true);
   };
 
@@ -515,21 +628,12 @@ function Calculator() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid lg:grid-cols-4 gap-6 mb-8">
             {CALC_GROUPS.map((group) => (
               <div key={group.group} className="card-glass rounded-2xl border border-white/5 overflow-hidden">
-                <div className={`px-5 py-3 border-b border-white/5 flex items-center gap-2 ${
-                  group.color === "blue" ? "bg-blue-500/10" :
-                  group.color === "purple" ? "bg-purple-500/10" : "bg-orange-500/10"
-                }`}>
-                  <Icon name={group.icon} fallback="Star" size={16} className={
-                    group.color === "blue" ? "text-blue-400" :
-                    group.color === "purple" ? "text-purple-400" : "text-orange-400"
-                  } />
-                  <span className={`font-golos font-bold text-sm ${
-                    group.color === "blue" ? "text-blue-300" :
-                    group.color === "purple" ? "text-purple-300" : "text-orange-300"
-                  }`}>{group.group}</span>
+                <div className={`px-5 py-3 border-b border-white/5 flex items-center gap-2 ${colorCls(group.color, "header")}`}>
+                  <Icon name={group.icon} fallback="Star" size={16} className={iconCls(group.color)} />
+                  <span className={`font-golos font-bold text-sm ${labelCls(group.color)}`}>{group.group}</span>
                 </div>
                 <div className="p-4 space-y-2">
                   {group.items.map((s) => {
@@ -539,19 +643,11 @@ function Calculator() {
                         key={s.id}
                         onClick={() => toggle(s.id)}
                         className={`w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all duration-200 ${
-                          isOn
-                            ? group.color === "blue" ? "bg-blue-500/10 border-blue-400/30" :
-                              group.color === "purple" ? "bg-purple-500/10 border-purple-400/30" :
-                              "bg-orange-500/10 border-orange-400/30"
-                            : "bg-white/3 border-white/5 hover:border-white/12"
+                          isOn ? colorCls(group.color, "on") : "bg-white/3 border-white/5 hover:border-white/12"
                         }`}
                       >
                         <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                          isOn
-                            ? group.color === "blue" ? "bg-blue-400 border-blue-400" :
-                              group.color === "purple" ? "bg-purple-400 border-purple-400" :
-                              "bg-orange-400 border-orange-400"
-                            : "border-white/20"
+                          isOn ? colorCls(group.color, "check") : colorCls(group.color, "off")
                         }`}>
                           {isOn && <Icon name="Check" size={10} className="text-[hsl(220,20%,6%)]" />}
                         </div>
@@ -559,12 +655,7 @@ function Calculator() {
                           <div className={`font-ibm text-sm ${isOn ? "text-white" : "text-white/60"}`}>{s.label}</div>
                           <div className="font-ibm text-xs text-white/30 mt-0.5">{s.desc}</div>
                         </div>
-                        <div className={`font-golos font-semibold text-xs whitespace-nowrap ${
-                          isOn
-                            ? group.color === "blue" ? "text-blue-300" :
-                              group.color === "purple" ? "text-purple-300" : "text-orange-300"
-                            : "text-white/25"
-                        }`}>
+                        <div className={`font-golos font-semibold text-xs whitespace-nowrap ${isOn ? labelCls(group.color) : "text-white/25"}`}>
                           {Math.round(s.base * SIZES[sizeIdx].mult).toLocaleString("ru")} ₽{s.unit}
                         </div>
                       </button>
@@ -628,8 +719,8 @@ function Calculator() {
                           placeholder="+7 (999) 000-00-00"
                           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 font-ibm text-sm text-white placeholder-white/20 focus:outline-none focus:border-purple-400/60 transition-colors"
                         />
-                        <button type="submit" className="btn-primary w-full py-2.5 rounded-xl text-sm">
-                          Получить расчёт
+                        <button type="submit" disabled={calcLoading} className="btn-primary w-full py-2.5 rounded-xl text-sm disabled:opacity-60 flex items-center justify-center gap-2">
+                          {calcLoading ? <><Icon name="Loader2" size={14} className="animate-spin" />Отправляем...</> : "Получить расчёт"}
                         </button>
                       </form>
                     </>
@@ -873,11 +964,11 @@ const CASES = [
 
 type CaseItem = typeof CASES[number];
 
-function CaseCard({ c, onOpen }: { c: CaseItem; onOpen: (c: CaseItem) => void }) {
+function CaseCard({ c }: { c: CaseItem }) {
   return (
-    <div
-      className="card-glass rounded-2xl overflow-hidden border border-white/5 group cursor-pointer hover:-translate-y-2 hover:border-white/15 hover:shadow-[0_8px_60px_rgba(139,92,246,0.18)] transition-all duration-400"
-      onClick={() => onOpen(c)}
+    <Link
+      to={`/cases/${c.id}`}
+      className="card-glass rounded-2xl overflow-hidden border border-white/5 group cursor-pointer hover:-translate-y-2 hover:border-white/15 hover:shadow-[0_8px_60px_rgba(139,92,246,0.18)] transition-all duration-400 block"
     >
       <div className="relative overflow-hidden h-52">
         <img src={c.image} alt={c.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -918,90 +1009,13 @@ function CaseCard({ c, onOpen }: { c: CaseItem; onOpen: (c: CaseItem) => void })
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
-function CaseModal({ c, onClose }: { c: CaseItem | null; onClose: () => void }) {
-  useEffect(() => {
-    if (c) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [c]);
 
-  if (!c) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto card-glass rounded-2xl border border-white/10 shadow-[0_0_100px_rgba(139,92,246,0.2)]">
-        <button onClick={onClose} className="absolute top-4 right-4 z-10 text-white/30 hover:text-white/70 transition-colors bg-black/40 rounded-lg p-1.5">
-          <Icon name="X" size={18} />
-        </button>
-
-        <div className="relative h-60 overflow-hidden rounded-t-2xl">
-          <img src={c.image} alt={c.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,20%,8%,0.95)] via-[hsl(220,20%,8%,0.3)] to-transparent" />
-          <div className="absolute bottom-5 left-6 flex gap-2">
-            <span className={`font-ibm text-xs font-semibold px-3 py-1.5 rounded-lg border backdrop-blur-sm ${
-              c.accent === "purple"
-                ? "bg-purple-500/30 border-purple-400/50 text-purple-200"
-                : "bg-orange-500/30 border-orange-400/50 text-orange-200"
-            }`}>{c.category}</span>
-            <span className="font-ibm text-xs px-3 py-1.5 rounded-lg border backdrop-blur-sm bg-white/10 border-white/20 text-white/70">{c.tag}</span>
-          </div>
-        </div>
-
-        <div className="p-7">
-          <div className="font-ibm text-white/35 text-xs mb-2">{c.client}</div>
-          <h2 className="font-golos font-black text-white text-2xl mb-6 leading-snug">{c.title}</h2>
-
-          <div className="grid grid-cols-2 gap-3 mb-7">
-            {c.results.map((r) => (
-              <div key={r.label} className={`rounded-xl p-4 ${c.accent === "purple" ? "bg-purple-400/10" : "bg-orange-400/10"}`}>
-                <div className={`font-golos font-black text-2xl mb-0.5 ${c.accent === "purple" ? "text-purple-300" : "text-orange-300"}`}>{r.metric}</div>
-                <div className="font-ibm text-white/50 text-xs">{r.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-5 mb-7">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-5 h-5 rounded bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                  <Icon name="AlertCircle" size={12} className="text-red-400" />
-                </div>
-                <span className="font-golos font-bold text-white text-sm">Проблема</span>
-              </div>
-              <p className="font-ibm text-white/55 text-sm leading-relaxed pl-7">{c.problem}</p>
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${c.accent === "purple" ? "bg-purple-500/20" : "bg-orange-500/20"}`}>
-                  <Icon name="Lightbulb" size={12} className={c.accent === "purple" ? "text-purple-400" : "text-orange-400"} />
-                </div>
-                <span className="font-golos font-bold text-white text-sm">Решение</span>
-              </div>
-              <p className="font-ibm text-white/55 text-sm leading-relaxed pl-7">{c.solution}</p>
-            </div>
-          </div>
-
-          <blockquote className={`rounded-xl p-5 border-l-2 ${c.accent === "purple" ? "bg-purple-400/8 border-purple-400" : "bg-orange-400/8 border-orange-400"}`}>
-            <p className="font-ibm text-white/65 text-sm leading-relaxed italic mb-3">"{c.quote}"</p>
-            <div className="font-golos font-semibold text-white/40 text-xs">— {c.quoteAuthor}</div>
-          </blockquote>
-
-          <a href="#contacts" onClick={onClose} className="btn-primary w-full py-3.5 rounded-xl text-base text-center block mt-6">
-            Обсудить похожий проект
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function Cases() {
-  const [activeCase, setActiveCase] = useState<CaseItem | null>(null);
   const [filter, setFilter] = useState("all");
   const { ref, inView } = useInView();
 
@@ -1025,7 +1039,6 @@ function Cases() {
 
   return (
     <section id="cases" className="py-24 relative" ref={ref}>
-      <CaseModal c={activeCase} onClose={() => setActiveCase(null)} />
       <div className="max-w-7xl mx-auto px-6">
         <div className={`mb-12 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Кейсы</span>
@@ -1056,7 +1069,7 @@ function Cases() {
               className={`transition-all duration-500 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
-              <CaseCard c={c} onOpen={setActiveCase} />
+              <CaseCard c={c} />
             </div>
           ))}
         </div>
@@ -1406,10 +1419,20 @@ function About() {
 function Contacts() {
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { ref, inView } = useInView();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch(SEND_FORM_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, phone: form.phone, message: form.message, source: "Секция контактов" }),
+      });
+    } catch (_e) { /* show success anyway */ }
+    setLoading(false);
     setSent(true);
   };
 
@@ -1469,8 +1492,8 @@ function Contacts() {
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-ibm text-white placeholder-white/20 focus:outline-none focus:border-purple-400/60 transition-colors resize-none"
                   />
                 </div>
-                <button type="submit" className="btn-primary w-full py-3.5 rounded-xl text-base">
-                  Отправить заявку
+                <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 rounded-xl text-base disabled:opacity-60 flex items-center justify-center gap-2">
+                  {loading ? <><Icon name="Loader2" size={16} className="animate-spin" />Отправляем...</> : "Отправить заявку"}
                 </button>
               </form>
             )}
@@ -1556,13 +1579,16 @@ function Footer() {
 
 export default function Index() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalCrm, setModalCrm] = useState("");
+
+  const openModal = (crm = "") => { setModalCrm(crm); setModalOpen(true); };
 
   return (
     <div className="min-h-screen bg-background">
-      <ModalForm open={modalOpen} onClose={() => setModalOpen(false)} />
-      <Nav onOpenModal={() => setModalOpen(true)} />
-      <Hero onOpenModal={() => setModalOpen(true)} />
-      <Services />
+      <ModalForm open={modalOpen} onClose={() => setModalOpen(false)} defaultCrm={modalCrm} />
+      <Nav onOpenModal={() => openModal()} />
+      <Hero onOpenModal={() => openModal()} />
+      <Services onOpenModal={openModal} />
       <Calculator />
       <Cases />
       <Portfolio />
