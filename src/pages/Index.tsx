@@ -275,6 +275,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
               { label: "Битрикс24", color: "bg-blue-500/20 text-blue-300 border-blue-500/30" },
               { label: "U-ON", color: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
               { label: "Геткурс", color: "bg-orange-500/20 text-orange-300 border-orange-500/30" },
+              { label: "БотХелп", color: "bg-green-500/20 text-green-300 border-green-500/30" },
             ].map((crm) => (
               <span key={crm.label} className={`font-ibm text-xs font-semibold px-3 py-1.5 rounded-lg border ${crm.color}`}>
                 {crm.label}
@@ -289,7 +290,7 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
           </h1>
 
           <p className="font-ibm text-white/60 text-lg leading-relaxed mb-10 max-w-xl">
-            Техническая поддержка и внедрение Битрикс24, U-ON и Геткурс.
+            Техническая поддержка и внедрение Битрикс24, U-ON, Геткурс и БотХелп.
             Настройка бизнес-процессов, интеграции и обучение сотрудников.
           </p>
 
@@ -776,6 +777,18 @@ const PORTFOLIO_TABS = [
       { tag: "Автоматизация", title: "Email-маркетинг", desc: "Настройка цепочек продающих писем, автосегментации базы и триггерных рассылок для инфобизнеса.", result: "LTV +45%", icon: "Mail", color: "orange" },
     ],
   },
+  {
+    id: "bothelp",
+    label: "БотХелп",
+    cases: [
+      { tag: "Telegram-бот", title: "Бот для салона красоты", desc: "Запись на услуги, напоминания перед визитом и повторные записи — всё через Telegram без звонков и администратора.", result: "Запись ×3", icon: "Scissors", color: "purple" },
+      { tag: "ВКонтакте", title: "Бот в ВКонтакте для интернет-магазина", desc: "Автоматические ответы на вопросы покупателей, каталог товаров и оформление заказа прямо в переписке.", result: "Конверсия +40%", icon: "ShoppingBag", color: "orange" },
+      { tag: "Воронка", title: "Прогревающая воронка", desc: "Цепочка сообщений для онлайн-школы: знакомство с продуктом, контент, прогрев и продажа курса через бота.", result: "Продажи ×2.5", icon: "Flame", color: "purple" },
+      { tag: "Интеграция", title: "Бот + CRM + оплата", desc: "Полная связка: бот собирает заявки, передаёт в Битрикс24, выставляет счёт и принимает оплату без участия менеджера.", result: "Рутина −80%", icon: "Zap", color: "orange" },
+      { tag: "Рассылки", title: "Сегментированные рассылки", desc: "Настройка умных рассылок по сегментам аудитории: реактивация «спящих» клиентов и апселл активным.", result: "Открываемость 60%", icon: "Send", color: "purple" },
+      { tag: "Аналитика", title: "Дашборд по боту", desc: "Подключение аналитики: конверсии по шагам воронки, точки отвала и A/B-тест сообщений для роста продаж.", result: "Решения быстрее ×4", icon: "BarChart2", color: "orange" },
+    ],
+  },
 ];
 
 function Portfolio() {
@@ -1110,6 +1123,16 @@ const REVIEWS_TABS = [
       { name: "Виктор Лебедев", role: "Коуч, «LevelUp Academy»", text: "Email-маркетинг настроили под ключ: цепочки прогрева, автосегментация, триггерные письма. LTV вырос на 45%. Теперь старые ученики покупают новые курсы сами.", stars: 5, initials: "ВЛ" },
     ],
   },
+  {
+    id: "bothelp",
+    label: "БотХелп",
+    reviews: [
+      { name: "Ирина Захарова", role: "Владелец, студия красоты «Bloom»", text: "Сделали бота для записи в салон. Теперь клиенты записываются сами в любое время, приходят напоминания. Администратор занимается работой, а не телефоном. Записей стало в 3 раза больше!", stars: 5, initials: "ИЗ" },
+      { name: "Павел Громов", role: "Директор, интернет-магазин «ТехноДом»", text: "Запустили бота в ВКонтакте для продаж. Теперь бот отвечает на вопросы, показывает каталог и принимает заказы. Конверсия выросла на 40%, менеджеры занимаются только сложными клиентами.", stars: 5, initials: "ПГ" },
+      { name: "Алина Романова", role: "Продюсер онлайн-курсов, «SmartLearn»", text: "Выстроили прогревающую воронку в Telegram через БотХелп. Холодная аудитория плавно прогревается и покупает курс без звонков. Продажи выросли в 2.5 раза за первый месяц!", stars: 5, initials: "АР" },
+      { name: "Константин Миронов", role: "Собственник, юридическая фирма «ЛексПро»", text: "Связали бота с CRM и онлайн-оплатой. Клиент оставляет заявку боту, оплачивает консультацию — и всё автоматически падает в Битрикс24. Экономим 80% времени на операционке.", stars: 5, initials: "КМ" },
+    ],
+  },
 ];
 
 function Reviews() {
@@ -1301,6 +1324,7 @@ const BLOG_POSTS = [
   { category: "Автоматизация", title: "Бизнес-процессы в Битрикс24: с чего начать", excerpt: "Простые и эффективные бизнес-процессы, которые избавят команду от рутины и ошибок уже в первую неделю.", date: "5 марта 2026", readTime: "6 мин", url: "https://helpdesk.bitrix24.ru/open/14736534/", color: "purple" },
   { category: "U-ON", title: "Как автоматизировать турагентство за 3 дня", excerpt: "Пошаговый план внедрения U-ON: от регистрации до первой автоматической сделки с клиентом.", date: "1 февраля 2026", readTime: "7 мин", url: "https://u-on.ru/blog/", color: "orange" },
   { category: "Геткурс", title: "Запуск онлайн-школы: 10 ошибок начинающих", excerpt: "Разбираем самые частые ошибки при запуске школы на Геткурсе и как их избежать без потери денег.", date: "10 марта 2026", readTime: "9 мин", url: "https://getcourse.ru/blog", color: "purple" },
+  { category: "БотХелп", title: "Telegram-бот для бизнеса: с чего начать в 2026", excerpt: "Разбираем, каким бизнесам боты приносят деньги, а каким — нет, и как выстроить первую воронку за 3 дня.", date: "28 февраля 2026", readTime: "7 мин", url: "https://bothelp.io/blog", color: "green" },
   { category: "CRM", title: "Почему менеджеры не работают в CRM — и как это исправить", excerpt: "Разбираемся с главной проблемой внедрения CRM: саботаж сотрудников и способы его преодолеть.", date: "25 февраля 2026", readTime: "6 мин", url: "https://vc.ru/marketing/crm", color: "orange" },
 ];
 
@@ -1329,7 +1353,9 @@ function Blog() {
               style={{ transitionDelay: `${i * 80}ms` }}
             >
               <div className={`h-1.5 transition-all duration-300 group-hover:h-2 ${
-                post.color === "purple" ? "bg-gradient-to-r from-purple-400 to-orange-400" : "bg-gradient-to-r from-orange-400 to-purple-400"
+                post.color === "purple" ? "bg-gradient-to-r from-purple-400 to-orange-400" :
+                post.color === "green" ? "bg-gradient-to-r from-green-400 to-teal-400" :
+                "bg-gradient-to-r from-orange-400 to-purple-400"
               }`} />
               <div className="p-6">
                 <div className="flex items-center justify-between mb-2">
