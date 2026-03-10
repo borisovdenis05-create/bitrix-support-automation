@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Icon from "@/components/ui/icon";
 import { CASES } from "@/data/cases";
 
-const LOGO = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/39cf89f9-e068-4ca7-81a6-b30477dfd19e.png";
+const LOGO = "https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/f495df76-0a5e-424f-bd07-a80b11237d0e.png";
 
 export default function CasePage() {
   const { id } = useParams<{ id: string }>();
@@ -12,7 +12,7 @@ export default function CasePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (c) {
-      document.title = `${c.title} — IT25`;
+      document.title = `${c.title} — ИТ25`;
       const desc = document.querySelector('meta[name="description"]');
       if (desc) desc.setAttribute("content", `${c.problem.slice(0, 155)}...`);
     }
@@ -40,7 +40,7 @@ export default function CasePage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-[hsl(220,20%,6%,0.95)] backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src={LOGO} alt="IT25" className="h-8 w-auto" />
+            <img src={LOGO} alt="ИТ25" className="h-10 w-auto" />
           </Link>
           <Link to="/#cases" className="flex items-center gap-2 font-ibm text-sm text-white/50 hover:text-white/90 transition-colors">
             <Icon name="ArrowLeft" size={16} />

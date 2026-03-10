@@ -3,6 +3,7 @@ import { Hero, Services, Calculator } from "@/components/sections/HeroServicesCa
 import { Cases, Portfolio, Reviews } from "@/components/sections/CasesPortfolioReviews";
 import { Education, Blog, About } from "@/components/sections/ContentSections";
 import { ModalForm, Nav, Contacts, Footer } from "@/components/sections/ContactsLayout";
+import Integrations from "@/components/sections/Integrations";
 
 export default function Index() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Index() {
       <Hero onOpenModal={() => openModal()} />
       <Services onOpenModal={openModal} />
       <Calculator />
+      <Integrations />
       <Cases />
       <Portfolio />
       <Reviews />

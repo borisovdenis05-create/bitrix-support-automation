@@ -124,6 +124,7 @@ export function Nav({ onOpenModal }: { onOpenModal: () => void }) {
 
   const links = [
     { label: "Услуги", href: "#services" },
+    { label: "Интеграции", href: "#integrations" },
     { label: "Кейсы", href: "#cases" },
     { label: "Портфолио", href: "#portfolio" },
     { label: "Отзывы", href: "#reviews" },
@@ -141,9 +142,9 @@ export function Nav({ onOpenModal }: { onOpenModal: () => void }) {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center">
           <img
-            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/39cf89f9-e068-4ca7-81a6-b30477dfd19e.png"
-            alt="IT25"
-            className="h-8 w-auto"
+            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/f495df76-0a5e-424f-bd07-a80b11237d0e.png"
+            alt="ИТ25"
+            className="h-10 w-auto"
           />
         </a>
 
