@@ -48,7 +48,7 @@ export function Education() {
         <div className={`mb-16 transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Обучение</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Программы обучения</h2>
-          <p className="font-ibm text-white/50 text-lg max-w-xl">
+          <p className="font-ibm text-white/75 text-lg max-w-xl">
             Обучаем сотрудников эффективно работать в CRM — от основ до экспертного уровня
           </p>
         </div>
@@ -75,18 +75,18 @@ export function Education() {
                   c.accent === "lime" ? "text-orange-400" : "text-purple-400"
                 }`}>{c.level}</span>
                 <h3 className="font-golos font-bold text-white text-xl mt-1 mb-3">{c.title}</h3>
-                <div className="flex gap-3 text-sm text-white/40 font-ibm">
+                <div className="flex gap-3 text-sm text-white/65 font-ibm">
                   <span className="flex items-center gap-1.5">
-                    <Icon name="Clock" size={14} className="text-white/30" /> {c.duration}
+                    <Icon name="Clock" size={14} className="text-white/50" /> {c.duration}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Icon name="Monitor" size={14} className="text-white/30" /> {c.format}
+                    <Icon name="Monitor" size={14} className="text-white/50" /> {c.format}
                   </span>
                 </div>
               </div>
               <ul className="space-y-2 mb-8">
                 {c.topics.map((t) => (
-                  <li key={t} className="flex items-center gap-2.5 font-ibm text-sm text-white/60">
+                  <li key={t} className="flex items-center gap-2.5 font-ibm text-sm text-white/80">
                     <Icon name="CheckCircle" size={14} className={
                       c.accent === "cyan" ? "text-purple-400" :
                       c.accent === "lime" ? "text-orange-400" : "text-purple-400"
@@ -161,8 +161,8 @@ export function Blog() {
                   <Icon name="ExternalLink" size={14} className="text-white/20 group-hover:text-purple-400 transition-colors" />
                 </div>
                 <h3 className="font-golos font-bold text-white text-lg mt-1 mb-3 group-hover:text-purple-300 transition-colors leading-snug">{post.title}</h3>
-                <p className="font-ibm text-white/40 text-sm leading-relaxed mb-6">{post.excerpt}</p>
-                <div className="flex items-center justify-between text-white/30 font-ibm text-xs">
+                <p className="font-ibm text-white/70 text-sm leading-relaxed mb-6">{post.excerpt}</p>
+                <div className="flex items-center justify-between text-white/55 font-ibm text-xs">
                   <span>{post.date}</span>
                   <span className="flex items-center gap-1.5"><Icon name="Clock" size={12} /> {post.readTime}</span>
                 </div>
@@ -194,15 +194,15 @@ export function About() {
         <div className={`transition-all duration-700 ${inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}>
           <span className="section-label mb-3 block">О компании</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-6">
-            Кто такие<br /><span className="gradient-text-purple">IT25?</span>
+            Кто такие<br /><span className="gradient-text-purple">ИТ25?</span>
           </h2>
-          <p className="font-ibm text-white/60 text-lg leading-relaxed mb-6">
+          <p className="font-ibm text-white/85 text-lg leading-relaxed mb-6">
             Мы — команда экспертов по автоматизации бизнеса. Уже 5 лет помогаем компаниям
             настраивать Битрикс24, U-ON и Геткурс так, чтобы они работали на вас, а не вы на них.
           </p>
-          <p className="font-ibm text-white/40 leading-relaxed">
+          <p className="font-ibm text-white/70 leading-relaxed">
             Наши клиенты — малый и средний бизнес: агентства, производственные компании,
-            медицина, онлайн-школы, ритейл. Мы говорим на языке бизнеса, а не IT.
+            медицина, онлайн-школы, ритейл. Мы говорим на языке бизнеса, а не ИТ.
           </p>
           <div className="grid grid-cols-2 gap-4 mt-10">
             {values.map((v, i) => (
@@ -216,7 +216,7 @@ export function About() {
                 </div>
                 <div>
                   <div className="font-golos font-semibold text-white text-sm">{v.label}</div>
-                  <div className="font-ibm text-white/40 text-xs leading-relaxed">{v.desc}</div>
+                  <div className="font-ibm text-white/65 text-xs leading-relaxed">{v.desc}</div>
                 </div>
               </div>
             ))}
@@ -225,12 +225,12 @@ export function About() {
 
         <div className={`relative transition-all duration-700 delay-200 ${inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`}>
           <div className="rounded-2xl overflow-hidden border border-white/8 shadow-[0_0_80px_rgba(139,92,246,0.15)]">
-            <img src={TEAM_IMAGE} alt="Команда IT25" className="w-full h-[440px] object-cover" />
+            <img src={TEAM_IMAGE} alt="Команда ИТ25" className="w-full h-[440px] object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,20%,6%,0.4)] to-transparent rounded-2xl" />
           </div>
           <div className="absolute -bottom-6 -right-6 card-glass rounded-2xl p-5 border border-white/10 animate-float">
             <div className="font-golos font-black text-3xl text-purple-400 mb-0.5">150+</div>
-            <div className="font-ibm text-white/50 text-sm">успешных проектов</div>
+            <div className="font-ibm text-white/75 text-sm">успешных проектов</div>
           </div>
         </div>
       </div>

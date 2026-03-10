@@ -226,7 +226,7 @@ export function Contacts() {
         <div className={`mb-12 text-center transition-all duration-700 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
           <span className="section-label mb-3 block">Контакты</span>
           <h2 className="font-golos text-4xl md:text-5xl font-black text-white mb-4">Обсудим ваш проект</h2>
-          <p className="font-ibm text-white/50 text-lg max-w-xl mx-auto">
+          <p className="font-ibm text-white/75 text-lg max-w-xl mx-auto">
             Оставьте заявку и мы свяжемся в течение часа
           </p>
         </div>
@@ -298,9 +298,9 @@ export function Contacts() {
                   <Icon name={c.icon} fallback="Mail" size={20} className="text-purple-400" />
                 </div>
                 <div>
-                  <div className="font-ibm text-white/40 text-xs mb-0.5">{c.label}</div>
+                  <div className="font-ibm text-white/60 text-xs mb-0.5">{c.label}</div>
                   <div className="font-golos font-semibold text-white group-hover:text-purple-300 transition-colors">{c.value}</div>
-                  <div className="font-ibm text-white/30 text-xs">{c.sub}</div>
+                  <div className="font-ibm text-white/60 text-xs">{c.sub}</div>
                 </div>
               </a>
             ))}
@@ -312,7 +312,7 @@ export function Contacts() {
                 </div>
                 <div className="font-golos font-semibold text-white">Работаем по всей России</div>
               </div>
-              <p className="font-ibm text-white/40 text-sm leading-relaxed">
+              <p className="font-ibm text-white/70 text-sm leading-relaxed">
                 Все услуги оказываем онлайн — настройка, внедрение, обучение и поддержка без ограничений по географии.
               </p>
             </div>
@@ -331,9 +331,9 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center">
           <img
-            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/39cf89f9-e068-4ca7-81a6-b30477dfd19e.png"
-            alt="IT25"
-            className="h-7 w-auto opacity-70"
+            src="https://cdn.poehali.dev/projects/73d44e83-d564-479d-8f43-da6574df1585/bucket/f495df76-0a5e-424f-bd07-a80b11237d0e.png"
+            alt="ИТ25"
+            className="h-9 w-auto opacity-80"
           />
         </div>
 
@@ -346,13 +346,13 @@ export function Footer() {
             { label: "Обучение", href: "#education" },
             { label: "Контакты", href: "#contacts" },
           ].map((l) => (
-            <a key={l.label} href={l.href} className="font-ibm text-sm text-white/30 hover:text-white/70 transition-colors">
+            <a key={l.label} href={l.href} className="font-ibm text-sm text-white/60 hover:text-white/90 transition-colors">
               {l.label}
             </a>
           ))}
         </div>
 
-        <div className="font-ibm text-white/20 text-sm">© 2026 IT25</div>
+        <div className="font-ibm text-white/50 text-sm">© 2026 ИТ25</div>
       </div>
     </footer>
   );

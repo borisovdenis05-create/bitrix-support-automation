@@ -29,7 +29,7 @@ const INTEGRATIONS = [
       {
         name: "Wazzup",
         logo: "https://wazzup24.com/wp-content/uploads/2021/08/wazzup-logo.svg",
-        desc: "WhatsApp и Instagram в Битрикс24",
+        desc: "WhatsApp и ВКонтакте в Битрикс24",
       },
       {
         name: "Chat2Desk",
@@ -110,9 +110,9 @@ const INTEGRATIONS = [
         desc: "Цели, воронки, вебвизор из CRM",
       },
       {
-        name: "Google Analytics",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/GAnalytics.svg/240px-GAnalytics.svg.png",
-        desc: "Отслеживание конверсий и источников",
+        name: "Яндекс.Директ",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Yandex_Direct_logo.svg/320px-Yandex_Direct_logo.svg.png",
+        desc: "Передача лидов из рекламы в CRM",
       },
     ],
   },
@@ -129,7 +129,7 @@ export default function Integrations() {
           <h2 className="text-3xl md:text-4xl font-golos font-bold text-white mb-4">
             Подключаем всё, что нужно бизнесу
           </h2>
-          <p className="text-white/50 font-ibm text-base max-w-2xl mx-auto">
+          <p className="text-white/75 font-ibm text-base max-w-2xl mx-auto">
             Настраиваем интеграции CRM с телефонией, мессенджерами, 1С,
             маркетплейсами и десятками других сервисов — всё работает как единая
             экосистема.
@@ -139,7 +139,7 @@ export default function Integrations() {
         <div className="space-y-10">
           {INTEGRATIONS.map((group) => (
             <div key={group.category}>
-              <h3 className="text-sm font-ibm font-medium text-white/40 uppercase tracking-widest mb-4">
+              <h3 className="text-sm font-ibm font-medium text-white/65 uppercase tracking-widest mb-4">
                 {group.category}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -163,7 +163,7 @@ export default function Integrations() {
                       <div className="font-golos font-semibold text-white text-sm">
                         {item.name}
                       </div>
-                      <div className="font-ibm text-white/50 text-xs mt-0.5 leading-snug">
+                      <div className="font-ibm text-white/75 text-xs mt-0.5 leading-snug">
                         {item.desc}
                       </div>
                     </div>
@@ -174,7 +174,7 @@ export default function Integrations() {
           ))}
         </div>
 
-        <p className="text-center text-white/30 font-ibm text-sm mt-12">
+        <p className="text-center text-white/60 font-ibm text-sm mt-12">
           Не нашли свой сервис? Свяжитесь с нами — скорее всего, мы уже
           интегрировали его.
         </p>

@@ -40,7 +40,7 @@ def handler(event: dict, context) -> dict:
         return {"statusCode": 500, "headers": cors_headers, "body": json.dumps({"error": "Bot not configured"})}
 
     lines = [
-        "📩 <b>Новая заявка с сайта IT25</b>",
+        "📩 <b>Новая заявка с сайта ИТ25</b>",
         "",
         f"👤 <b>Имя:</b> {name}",
         f"📱 <b>Телефон:</b> {phone}",
